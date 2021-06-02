@@ -1,0 +1,44 @@
+<!--myredeemed.ejs-->
+
+<div class="columns is-desktop">
+    <div class="pl-6 column is-one-third-desktop">
+        <h1 class="has-text-weight-bold">Redeemed coupons:</h1>
+    </div>
+    <div class="pl-6 column is-half-desktop">
+        <h1 class="has-text-weight-bold" >Current Balance: <%= user.coins %></h1>
+    </div>
+</div>
+
+
+<div class="columns is-desktop">
+    <% restaurant.forEach( function(restaurant) { %>
+
+    <div class="column is-one-third-desktop">
+        <div class="card">
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    <img src=<%= restaurant.image %> alt="Placeholder image">
+                </figure>
+            </div>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        <p class="title is-4"><a
+                                href="http://localhost:1337/restaurant/read/<%= restaurant.id %>"><%= restaurant.restaurant %></a>
+                        </p>
+                        <p class="subtitle is-6"><%= restaurant.title %></p>
+                    </div>
+                </div>
+                <div class="content">
+                    <br>
+                    Expiry date: <%= restaurant.expirydate %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% }); %>
+
+
+
+</div>

@@ -1,0 +1,176 @@
+<!--paginate.ejs-->
+
+<table class="table is-bordered is-striped is-hoverable is-fullwidth">
+
+
+
+    <div class="columns is-desktop">
+
+        <div id="p2" class="column is-half-desktop"></div>
+
+        <div class="column is-one-third-desktop">
+
+            <form action="/restaurant/aginate" method="post">
+
+                <div class="field">
+                    <label class="label">Region</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="region">
+                                <option value="">Not Specified</option>
+                                <option value="HK Island">HK Island</option>
+                                <option value="Kowloon">Kowloon</option>
+                                <option value="New Territories">New Territories</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Min Coin</label>
+                    <div class="control">
+                        <input name="min" class="input" type="number" min=0 max=10000 placeholder="Input Number">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Max Coin</label>
+                    <div class="control">
+                        <input name="max" class="input" type="number" min=0 max=10000 placeholder="Input Number">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Valid On</label>
+                    <div class="control">
+                        <input name="valid" class="input" type="date" placeholder="Date">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link" type="submit">Search</button>
+                    </div>
+                </div>
+
+            </form>
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+</table>
+
+<nav class="pagination" role="navigation" aria-label="pagination">
+    <button class="pagination-previous" id="previousButton">Previous</button>
+    <button class="pagination-next" id="nextButton">Next page</button>
+    <ul class="pagination-list">
+        <li>
+            <a class="pagination-link" id="firstLink">1</a>
+        </li>
+        <li>
+            <span class="pagination-ellipsis">&hellip;</span>
+        </li>
+        <li>
+            <a class="pagination-link" id="previousLink">45</a>
+        </li>
+        <li>
+            <a class="pagination-link is-current" id="currentLink">46</a>
+        </li>
+        <li>
+            <a class="pagination-link" id="nextLink">47</a>
+        </li>
+        <li>
+            <span class="pagination-ellipsis">&hellip;</span>
+        </li>
+        <li>
+            <a class="pagination-link" id="lastLink">86</a>
+        </li>
+    </ul>
+</nav>
+
+<script>
+    function setPagination(limit, offset) {
+
+        var previousButton = document.getElementById("previousButton");
+        var nextButton = document.getElementById("nextButton");
+        var currentLink = document.getElementById("currentLink");
+        var previousLink = document.getElementById("previousLink");
+        var nextLink = document.getElementById("nextLink");
+        var firstLink = document.getElementById("firstLink");
+        var lastLink = document.getElementById("lastLink");
+
+        var numOfRecords = parseInt("<%= numOfRecords %>");
+
+        firstLink.onclick = function () { fetchPage(limit, 0) };
+        previousButton.onclick = function () { fetchPage(limit, offset - limit) };
+        previousLink.onclick = function () { fetchPage(limit, offset - limit) };
+        currentLink.onclick = function () { fetchPage(limit, offset) };
+        nextLink.onclick = function () { fetchPage(limit, offset + limit) };
+        nextButton.onclick = function () { fetchPage(limit, offset + limit) };
+        lastLink.onclick = function () { fetchPage(limit, (Math.ceil(numOfRecords / limit) - 1) * limit) };
+
+
+        var currentPageNumber = Math.floor(offset / limit) + 1;
+
+        previousLink.innerHTML = currentPageNumber - 1;
+        currentLink.innerHTML = currentPageNumber;
+        nextLink.innerHTML = currentPageNumber + 1;
+        lastLink.innerHTML = Math.ceil(numOfRecords / limit);
+
+        if (offset < limit) {
+            previousButton.setAttribute("disabled", true);
+            previousLink.style.display = "none";
+        }else {
+            previousButton.removeAttribute("disabled");
+            previousLink.style.display = "block";
+        }
+
+        if (offset + limit >= numOfRecords) {
+            nextButton.setAttribute("disabled", true);
+            // nextButton.herf = "";
+            nextLink.style.display = "none";
+        }else{
+            nextButton.removeAttribute("disabled");
+            // nextButton.herf = "";
+            nextLink.style.display = "block";
+        }
+    }
+
+</script>
+
+<script>
+    async function fetchPage(limit, offset) {
+
+        var response = await fetch("/restaurant/aginate?limit=" + limit + "&offset=" + offset, {
+            method: "GET"
+        });
+
+        if (response.ok) {
+            var restaurants = await response.json();
+
+            var dynamicCode = '<div class="card">';
+
+            restaurants.forEach(function (restaurant) {
+                dynamicCode += '<div class="card-image"><figure class="image is-4by3"><img src=' + restaurant.image + ' alt="Placeholder image"></figure></div><div class="card-content"><div class="media"><div class="media-content"><p class="title is-4"><a href="http://localhost:1337/restaurant/read/' + restaurant.id + '">' + restaurant.restaurant + '</a></p><p class="subtitle is-6">' + restaurant.title + '</p></div></div><div class="content"><br>Coins: ' + restaurant.coins + '</div></div>';
+            });
+
+            document.querySelector("#p2").innerHTML = dynamicCode + "</div>";
+
+            setPagination(limit, offset);
+
+        } else {
+            alert(response.status + ": " + response.statusText);
+        }
+
+    };
+
+    fetchPage(2, 0);
+</script>

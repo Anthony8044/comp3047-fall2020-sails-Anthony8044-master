@@ -1,0 +1,212 @@
+<!--update.ejs-->
+<form action="/restaurant/update/<%= restaurant.id %>" method="POST" onsubmit="submitForm(this);return false">
+
+    <div class="columns is-desktop">
+
+        <div class="column is-half-desktop">
+
+            <div class="field">
+                <label class="label">Title</label>
+                <div class="control">
+                    <input class="input" type="text" name="title" value="<%= restaurant.title %>" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Restaurant</label>
+                <div class="control">
+                    <input class="input" type="text" name="restaurant" value="<%= restaurant.restaurant %>" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Region</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="region" id="region" onchange="regionSelected(this.value)">
+                            <option value="HK Island">HK Island</option>
+                            <option value="Kowloon">Kowloon</option>
+                            <option value="New Territories">New Territories</option>
+                        </select>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Mall</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="mall" id="mall">
+                            <option value="IFC Mall">IFC Mall</option>
+                            <option value="Pacific Place">Pacific Place</option>
+                            <option value="Times Square">Times Square</option>
+                            <option value="Elements">Elements</option>
+                            <option value="Harbour City">Harbour City</option>
+                            <option value="Festival Walk">Festival Walk</option>
+                            <option value="Mega Box">MegaBox</option>
+                            <option value="APM">APM</option>
+                            <option value="New Town Plaza">New Town Plaza</option>
+                            <option value="Tsuen Wan Plaza">Tsuen Wan Plaza</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Image</label>
+                <div class="control">
+                    <input name="image" class="input" type="text" placeholder="Input URL"
+                        value="<%= restaurant.image %>">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="column is-half-desktop">
+
+            <div class="field">
+                <label class="label">Quota</label>
+                <div class="control">
+                    <input name="quota" class="input" type="number" min=0 max=10000 placeholder="Input Number"
+                        value="<%= restaurant.quota %>">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Coins</label>
+                <div class="control">
+                    <input name="coins" class="input" type="number" min=0 max=10000 placeholder="Input Number"
+                        value="<%= restaurant.coins %>">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">ExpiryDate</label>
+                <div class="control">
+                    <input name="expirydate" class="input" type="date" placeholder="Date"
+                        value="<%= restaurant.expirydate %>">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Detail</label>
+                <div class="control">
+                    <textarea name="detail" id="detail" class="textarea" placeholder="Textarea"></textarea>
+                </div>
+            </div>
+
+            <button class="button is-link" type="submit">Update</button>
+
+        </div>
+    </div>
+
+</form>
+
+
+<button type="button" class="button is-danger" onclick="deleteRestaurant('<%= restaurant.id %>')">Delete</button>
+
+<script>
+    async function submitForm(formElem) {
+
+        var response = await fetch(formElem.action, {
+            method: formElem.method,
+            body: new FormData(formElem),
+        });
+
+        if (response.ok) {
+            alert("Coupon Updated!");
+            location.assign('http://localhost:1337/restaurant/admin')
+        } else if (response.status == 401) {
+            var msg = await response.json();
+            alert(msg);
+        } else {
+            alert(response.statusText);
+        }
+    };
+</script>
+
+<script>
+    async function deleteRestaurant(id) {
+        var r = confirm("Confirm Delete?");
+
+        if (r) {
+            var response = await fetch("/restaurant/" + id, {
+                method: "DELETE"
+            });
+
+            if (response.ok) {
+                alert("Coupon Deleted")
+                location.assign('http://localhost:1337/restaurant/admin')
+            } else {
+                alert(response.status + ": " + response.statusText);
+            }
+
+        } else {
+            alert("Cancelled");
+        }
+    };
+</script>
+
+<script>
+    document.getElementById('region').value = "<%= restaurant.region %>";
+    document.getElementById('mall').value = "<%= restaurant.mall %>";
+    document.getElementById('detail').value = "<%= restaurant.detail %>";
+
+
+
+
+    var HKIsland = ["IFC Mall", "Pacific Place", "Times Square"];
+    var Kowloon = ["Elements", "Harbour City", "Festival Walk", "MegaBox"];
+    var NT = ["APM", "New Town Plaza", "Tsuen Wan Plaza"];
+
+
+    function regionSelected(Region) {
+        var mallElem = document.getElementById("mall");
+        mallElem.options.length = 0;
+
+
+        if (Region == "HK Island") {
+
+            HKIsland.forEach(function (item) {
+                var option = document.createElement("option");
+                option.text = item;
+                option.value = item;
+                mallElem.add(option);
+            });
+
+            mallElem.disabled = false;
+
+        } else if (Region == "Kowloon") {
+
+            Kowloon.forEach(function (item) {
+                var option = document.createElement("option");
+                option.text = item;
+                option.value = item;
+                mallElem.add(option);
+            });
+
+            mallElem.disabled = false;
+
+        } else if (Region == "New Territories") {
+
+            NT.forEach(function (item) {
+                var option = document.createElement("option");
+                option.text = item;
+                option.value = item;
+                mallElem.add(option);
+            });
+
+            mallElem.disabled = false;
+
+        } else {
+
+            mallElem.disabled = true;
+        }
+
+
+    }
+
+
+
+</script>

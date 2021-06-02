@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="localhost:1337">
+        <img src="https://pbs.twimg.com/profile_images/1208433111/Qpon_Logo.png" width="70" height="60">
+      </a>
+
+      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+        data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="http://localhost:1337/">
+          Home
+        </a>
+
+        <a class="navbar-item" href="http://localhost:1337/restaurant/aginate">
+          Search
+        </a>
+
+        <% if ( session.userrole =="member" ) { %>
+
+        <a class="navbar-item" href="http://localhost:1337/user/myredeemed/<%= session.userid %>">
+          My Redeemed Coupons
+        </a>
+
+        <% }; %>
+
+
+        <% if ( session.userrole =="admin" ) { %>
+
+        <a class="navbar-item" href="http://localhost:1337/restaurant/create">
+          Create
+        </a>
+
+        <a class="navbar-item" href="http://localhost:1337/restaurant/admin">
+          Admin
+        </a>
+
+        <% }; %>
+
+
+      </div>
+
+      <div class="navbar-end">
+        <div class="navbar-item">
+
+          <% if (session.userrole !="admin" && session.userrole !="member") { %>
+
+          <div class="buttons">
+            <a class="button is-primary" onclick="login()">
+              <strong>Log in</strong>
+            </a>
+          </div>
+          <% }; %>
+
+          <% if (session.username =="admin" || session.username =="member" ) { %>
+
+            <div>Hi, <%= session.username %>      </div>
+            <a class="navbar-item" href="http://localhost:1337/user/logout">Logout</a>
+
+          <% }; %>
+
+
+
+
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pl-5">
+    <h1 class="title">Q-Pon</h1>
+    <h2 class="subtitle">Redeem your coins for dining coupons.</h2>
+  </div>
+
+  <!--STYLES-->
+  <link rel="stylesheet" href="/styles/importer.css">
+  <!--STYLES END-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+  <script>
+    function login() {
+      location.replace("http://localhost:1337/user/login")
+    }
+
+  </script>
+
+</head>
+
+<body>
+
+  <section class="section">
+
+
+    <%- body %>
+
+
+
+  </section>
+
+
+
+
+
+
+  <!--SCRIPTS-->
+  <script src="/dependencies/sails.io.js"></script>
+  <!--SCRIPTS END-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+</body>
+
+</html>

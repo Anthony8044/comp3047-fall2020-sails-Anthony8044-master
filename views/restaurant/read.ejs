@@ -1,0 +1,63 @@
+<div class="columns is-desktop">
+    <div class="column is-two-thirds-desktop">
+        <figure class="image">
+            <img src=<%= restaurant.image %>>
+        </figure>
+
+    </div>
+
+    <div class="column">
+        <div class="content">
+            <ul>
+                <li class="has-text-weight-bold"><%= restaurant.restaurant %></li>
+                <li class="has-text-weight-bold"><%= restaurant.title %></li>
+                <li class="has-text-weight-bold">Coins: <span
+                        class="has-text-weight-normal"><%= restaurant.coins %></span></li>
+                <li class="has-text-weight-bold">Address: <span class="has-text-weight-normal"><%= restaurant.mall %>,
+                        <%= restaurant.region %></span></li>
+                <li class="has-text-weight-bold">Expiry Date: <span
+                        class="has-text-weight-normal"><%= restaurant.expirydate %></span></li>
+                <li class="has-text-weight-normal"><%= restaurant.detail %></li>
+            </ul>
+        </div>
+
+        <button type="button" class="button is-danger is-large is-fullwidth"
+            onclick="redeemCoupon('<%= session.userid %>','<%= restaurant.id %>' )">Redeem</button>
+
+    </div>
+</div>
+
+<script>
+    async function redeemCoupon(userid, restid) {
+        var r = confirm("Confirm Redeem?");
+
+        if (r) {
+            var response = await fetch("/user/" + userid + "/coupons/add/" + restid, {
+                method: "POST"
+            });
+
+            if (response.ok) {
+                alert("Coupon Redeemed")
+                location.assign('http://localhost:1337/')
+            } else if (response.status == 409) {
+                var msg = await response.json();
+                alert(msg);
+            } else if (response.status == 405) {
+                var msg1 = await response.json();
+                alert(msg1);
+            } else if (response.status == 406) {
+                var msg2 = await response.json();
+                alert(msg2);
+            }else if (response.status == 404) {
+                alert("Log in to redeem Coupons");
+                location.assign('http://localhost:1337/user/login')
+            }
+            else {
+                alert(response.status + ": " + response.statusText);
+            }
+
+        } else {
+            alert("Cancelled");
+        }
+    };
+</script>
